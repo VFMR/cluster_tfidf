@@ -2,6 +2,7 @@ import random
 RND = 42
 random.seed(RND)
 import json
+import os
 
 import numpy as np
 np.random.seed(RND)
@@ -89,12 +90,12 @@ class EmbeddingCluster(BaseEmbeddingClass):
         return multi_clusters
 
 
-    def get_multi_clusters(self):
+    def _get_multi_clusters(self):
         return self._multi_cluster_func(self.index2cluster.values())
 
 
     def get_n_clusters(self):
-        return len(self.get_multi_clusters())
+        return len(self._get_multi_clusters())
 
     def _clustering_split(self, split, cluster=True):
         split_indices = [x[1] for x in split]
@@ -188,6 +189,13 @@ class EmbeddingCluster(BaseEmbeddingClass):
         return self
 
 
+    def _make_save_folder(folder):
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        else:
+            print('Save folder already exists. Overwriting content.')
+
+
     def save(self, dir, name='clustertfidf'):
         """ Save to disk to allow using this model later on. 
         Saves multiple files into a folder
@@ -196,36 +204,40 @@ class EmbeddingCluster(BaseEmbeddingClass):
             dir (str): name of directory to save in.
             name (str): name of the directory that is created to save 
         """
+        # create save folder
+        folder = os.path.join(dir, name)
+        self._make_save_folder(folder)
+
         exports = {
             'index2word': self.index2word,
             'word2index': self.word2index,
             'index2norm': {key: float(value) for key, value in self.index2norm.items()},
             'index2cluster': {key: int(value) for key, value in self.index2cluster.items()}
             }
+
         for key, value in exports.items():
-            print(key)
-            with open(f'{dir}/{name}_{key}.json', 'w') as f:
+            filename = os.path.join(folder, key+'.json')
+            with open(filename, 'w') as f:
                 json.dump(value, f)
 
 
-    def load_obj(self, file):
+    def _load_obj(self, file):
         with open(file+'.json', 'r') as f:
             content = f.read()
             result = json.loads(content)
         return result
 
 
-    def load(self, dir, name='clustertfidf'):
+    def load(self, path):
         """[summary]
 
         Args:
-            dir ([type]): [description]
-            name (str, optional): [description]. Defaults to 'clustertfidf'.
+            path (str): Name of the directory that holds the results from save method.
         """
-        self.index2word = self.load_obj(dir+'/'+name+'_'+'index2word')
-        self.word2index = self.load_obj(dir+'/'+name+'_'+'word2index')
-        self.index2norm = self.load_obj(dir+'/'+name+'_'+'index2norm')
-        self.index2cluster = self.load_obj(dir+'/'+name+'_'+'index2cluster')
+        self.index2word = self._load_obj(path+'/index2word')
+        self.word2index = self._load_obj(path+'/word2index')
+        self.index2norm = self._load_obj(path+'/index2norm')
+        self.index2cluster = self._load_obj(path+'/index2cluster')
 
         # make sure values are numeric:
         self.index2norm = {key: float(value) for key, value in self.index2norm.items()}

@@ -16,7 +16,7 @@ from sklearn.pipeline import Pipeline
 
 from .utils import clean_term, count_file_rows
 from .clustering import EmbeddingCluster
-from .base import BaseEmbeddingClass
+from .base import _BaseEmbeddingClass
 
 
 def get_df(idf, n_docs):
@@ -104,7 +104,7 @@ class TfidfCounter:
         return self.counter.inverse_transform(X)
 
 
-class ClusterTfidf(BaseEmbeddingClass):
+class ClusterTfidf(_BaseEmbeddingClass):
     def __init__(self, 
                  vectorizer,
                  embeddings,
@@ -112,9 +112,7 @@ class ClusterTfidf(BaseEmbeddingClass):
                  corpus_path=None,
                  corpus_path_encoding='latin1',
                  load_clustering=False,
-                 load_clustering_dir=None,
-                 load_clustering_name='clustertfidf',
-                 embedding_dim=300,
+                 embedding_dim=None,
                  n_top_clusters=7):
         """
         Class for computing Cluster TfIdf.
@@ -148,10 +146,13 @@ class ClusterTfidf(BaseEmbeddingClass):
         
         self.load_clustering = load_clustering
         if load_clustering:
-            self.clustering.load(dir=load_clustering_dir, name=load_clustering_name)
-        self.embedding_dim = embedding_dim
-
-
+            self.clustering.load(load_clustering)
+        
+        # Get embedding dimensionality by checking against some Word.
+        if embedding_dim:
+            self.embedding_dim = embedding_dim
+        else:
+            self.embedding_dim = self._get_embedding_dim(checkterm='test')
 
 
         # if not self.refit:
@@ -159,7 +160,30 @@ class ClusterTfidf(BaseEmbeddingClass):
         #     self.word2index = self.clustering.word2index
 
 
-    def fit(self, X=None):
+    def _get_embedding_dim(self, checkterm='test'):
+        array = self.embeddings[checkterm]
+        if len(array)==1:
+            embedding_dim = len(array[0])
+        else:
+            embedding_dim = len(array)
+        return embedding_dim
+
+
+    # HACK: fit method is not required
+    # Only here to make user interface simpler.
+    # This may be solvable with better name for cluster_vocab method.
+    def fit(self, savedir=None, savename='clustertfidf'):
+        """Convenience function to have a fit methods.
+        Only calls the cluster_vocab method in its place.
+
+        Args:
+            savedir ([type], optional): [description]. Defaults to None.
+            savename (str, optional): [description]. Defaults to 'clustertfidf'.
+        """
+        self.cluster_vocab(savedir, savename)
+
+
+    def cluster_vocab(self, savedir=None, savename='clustertfidf'):
         """Method to fit the Tfidf if self.refit and to compute the clusters on
             on an array of words.
 
@@ -167,7 +191,8 @@ class ClusterTfidf(BaseEmbeddingClass):
             X (iterable): Array of strings, i.e. non-tokenized texts.
         """
         self.clustering.fit()
-        self.clustering.save(dir='../../Temp')
+        if savedir:
+            self.clustering.save(dir=savedir, name=savename)
         return self
 
 
@@ -185,7 +210,7 @@ class ClusterTfidf(BaseEmbeddingClass):
         return array.unique()
 
 
-    def input_cleanup(self, X):
+    def _input_cleanup(self, X):
         new_X = []
         for row in tqdm(X, desc='Cleaning input'):
             if isinstance(row, str):
@@ -202,7 +227,7 @@ class ClusterTfidf(BaseEmbeddingClass):
 
     def predict(self, X):
         # tfidf:
-        X = self.input_cleanup(X)
+        X = self._input_cleanup(X)
 
         print('Vectorize texts')
         vects = self.vectorizer.transform(X)
