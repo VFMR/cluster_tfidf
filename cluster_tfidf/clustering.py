@@ -1,4 +1,5 @@
 import random
+from subprocess import NORMAL_PRIORITY_CLASS
 RND = 42
 random.seed(RND)
 import json
@@ -12,18 +13,19 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import MinMaxScaler
 
-from .base import BaseEmbeddingClass
+from .base import _BaseEmbeddingClass
 from .utils import clean_term
 
 
-class EmbeddingCluster(BaseEmbeddingClass):
+class EmbeddingCluster(_BaseEmbeddingClass):
     def __init__(self, 
                  embeddings,
                  vectorizer,
                  clustermethod='agglomerative',
                  distance_threshold=0.4,
                  n_words=False,
-                 cluster_share=0.2):
+                 cluster_share=0.2,
+                 checkterm='test'):
         """[summary]
 
         Args:
@@ -35,7 +37,9 @@ class EmbeddingCluster(BaseEmbeddingClass):
         Raises:
             ValueError: if clustermethod not valid
         """
-        super().__init__(embeddings=embeddings, vectorizer=vectorizer)
+        super().__init__(embeddings=embeddings, 
+                         vectorizer=vectorizer,
+                         checkterm=checkterm)
         # input values:
         self.clustermethod = clustermethod
         self.distance_threshold = distance_threshold
@@ -50,13 +54,13 @@ class EmbeddingCluster(BaseEmbeddingClass):
         self.word2index = self._get_word2index(self.index2word)
 
         if n_words:
-            self.n_words = n_words
+            self._n_words = min(n_words, len(self.index2word))
         else:
-            self.n_words = len(self.index2word)
-        self.n_clusters = int(cluster_share*self.n_words)
+            self._n_words = len(self.index2word)
+        self._n_clusters = int(cluster_share*self._n_words)
 
         # restrict embeddings to relevant words to save memory
-        self.embeddings = {word: embeddings[word] for word in self.index2word.values()}
+        self.embeddings = {word: self._embedding_lookup(word) for word in self.index2word.values()}
 
 
     def _get_cluster_model(self):
@@ -66,12 +70,11 @@ class EmbeddingCluster(BaseEmbeddingClass):
                                             distance_threshold=self.distance_threshold,
                                             linkage='average')
         elif self.clustermethod=='kmeans':
-            model = KMeans(n_clusters=self.n_clusters, random_state=RND, n_jobs=-1)
+            model = KMeans(n_clusters=self._n_clusters, random_state=RND, n_jobs=-1)
         return model
 
 
     def _find_top_words(self):
-        
         vectorizer = self._find_vectorizer_instance()
         idf = vectorizer.idf_
         vocab = {clean_term(term): ix for term, ix in vectorizer.vocabulary_.items()}
@@ -103,16 +106,16 @@ class EmbeddingCluster(BaseEmbeddingClass):
         split_indices = [x[1] for x in split]
         X_embeds = np.array([x[2] for x in split])
         norm = np.linalg.norm
-        self.norms = self.norms+[norm(x) for x in X_embeds]
+        self._norms = self._norms+[norm(x) for x in X_embeds]
         
         if cluster:
-            clusters = self.model.fit_predict(X_embeds) + self.maxcluster
+            clusters = self.model.fit_predict(X_embeds) + self._maxcluster
         else:
-            clusters = np.arange(len(split)) + 1 + self.maxcluster
+            clusters = np.arange(len(split)) + 1 + self._maxcluster
         
         index2cluster = {ix: c for ix, c in zip(split_indices, clusters)}
         self.index2cluster.update(index2cluster)
-        self.maxcluster = max([x for x in self.index2cluster.values()])
+        self._maxcluster = max([x for x in self.index2cluster.values()])
 
 
     def _fix_missing_clusters(self):
@@ -143,19 +146,19 @@ class EmbeddingCluster(BaseEmbeddingClass):
         self.model = self._get_cluster_model()
         # X = [(x[0], x[1]) for x in self.vocabulary
         X = self._find_top_words()
-        X_top = X[:self.n_words]
-        X_bottom = X[self.n_words:]
+        X_top = X[:self._n_words]
+        X_bottom = X[self._n_words:]
         
         random.shuffle(X_top)
         
         self.index2cluster = {}
-        self.maxcluster = 0
-        self.norms = []
+        self._maxcluster = 0
+        self._norms = []
         excluded = []
         indices = []
 
 
-        embedded_array = [(x[0], x[1], self.embeddings[x[0]]) for x in X_top]
+        embedded_array = [(x[0], x[1], self._embedding_lookup(x[0])) for x in X_top]
 
         # remove all terms that have zero-vector, i.e. oov
         excluded = excluded+[x for x in embedded_array if not x[2].any()]
@@ -164,21 +167,35 @@ class EmbeddingCluster(BaseEmbeddingClass):
         self._update_clusters(embedded_array)
 
         # manually add "clusters" for left out terms:
-        X_bottom_w_embeddings = [(x[0], x[1], self.embeddings[x[0]]) for x in X_bottom]
+        X_bottom_w_embeddings = [(x[0], x[1], self._embedding_lookup(x[0])) for x in X_bottom]
         for array in [excluded, X_bottom_w_embeddings]:
-            self._clustering_split(array, cluster=False)
+            self._update_clusters(array, cluster=False)
             indices = indices+[x[1] for x in array]
         
-            
-        self.norms = np.array(self.norms).reshape(-1, 1)
-        # scaling the norms to be in the [0, 1] range:
-        scaler = MinMaxScaler()
-        norms_scaled = scaler.fit_transform(self.norms)
+        # scaling the norms and adding them to lookup dictionary
+        norms_scaled = self._scale_norms(self._norms)
         self.index2norm = {indices[i]: norm[0] for i, norm in enumerate(norms_scaled)}
-
         
+        # HACK: I am not sure what caused this, but a tiny number of terms
+        # still did not receive a cluster
         self._fix_missing_clusters()
+
         return self
+
+
+    def _scale_norms(self, norms):
+        """Scale norms to be in [0,1] range
+
+        Args:
+            norms (numpy.array): Array containing the vector norms
+
+        Returns:
+            numpy.array: scaled vector norms
+        """
+        norms = np.array(norms).reshape(-1, 1)
+        scaler = MinMaxScaler()
+        norms_scaled = scaler.fit_transform(norms)
+        return norms_scaled
 
 
     def _make_save_folder(folder):

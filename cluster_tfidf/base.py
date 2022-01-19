@@ -19,14 +19,14 @@ class _BaseEmbeddingClass:
         self.vocabulary = xvect.vocabulary_.items()
 
         # retrieve values:
-        self.embedding_dim = self._get_embedding_dim(self.embeddings, checkterm=checkterm)
+        self._embedding_dim = self._get_embedding_dim(self.embeddings, checkterm=checkterm)
 
 
     def _embedding_lookup(self, term):
         try:
             result = self.embeddings[term]
         except:
-            result = np.zeros(self.embedding_dim)
+            result = np.zeros(self._embedding_dim)
         return result
 
 
@@ -40,7 +40,7 @@ class _BaseEmbeddingClass:
 
 
     def _embed_array_of_words(self, X):
-        array = np.zeros( (len(X), self.embedding_dim) )
+        array = np.zeros( (len(X), self._embedding_dim) )
         for i, word in enumerate(tqdm(X, desc='Embedding lookup')):
             array[i] = self._embedding_lookup(word)
 
@@ -50,52 +50,6 @@ class _BaseEmbeddingClass:
 
     def _remove_oov(self, array):
         return array[~(array==0).all(1)] 
-
-
-    # REMOVE This appears to do nothing:
-    # def _padding(self, X):
-    #     """Padding to make transform rows with a variable number of words into a matrix.
-
-    #     Args:
-    #         X (iterable of iterables): The array to pad
-
-    #     Returns:
-    #         numpy.array: matrix with padded rows
-    #     """
-    #     maxlen = max([len(row) for row in X])
-    #     result_array = np.zeros( (len(X), maxlen) )
-    #     for i, row in X:
-    #         result_array[i] = np.array(row + [0]*(maxlen-len(row)))
-    #     return result_array
-
-
-    # REMOVE Not used.
-    # def _embedding_aggregation(self, X, weights):
-    #     """compute the weighted aggregation of words given a set of words.
-
-    #     Args:
-    #         X (iterable of iterable): Array where each row is an array of strings. I.e.
-    #             documents split into words.
-    #         weights ([type]): weights to multiply each word embedding with. Number of
-    #             elements in each sublist must be the same as X
-
-    #     Returns:
-    #         numpy.array: the (n, embedding_dim) matrix of weighted embeddings
-    #     """
-    #     result = np.zeros( (len(X), self.embedding_dim))
-        
-    #     # implemented in a loop because of variable length of rows.
-    #     # Padding instead avoided due to memory concerns.
-    #     # While vectorized operation would be faster, this appears
-    #     # to be sufficiently fast.
-    #     for i, row in enumerate(tqdm(X, desc='Aggregation of embeddings')):
-
-    #         row_weights = np.array(weights[i])
-    #         embedding_mat = np.array([self.embeddings[x] for x in row])
-
-    #         aggregate = row_weights@embedding_mat
-    #         result[i] = aggregate
-    #     return result
 
 
     def _is_tfidf(self, obj):

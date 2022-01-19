@@ -2,7 +2,6 @@ import math
 import random
 from statistics import mean
 
-from base import BaseEmbeddingClass
 RND = 42
 random.seed(RND)
 
@@ -69,12 +68,13 @@ def get_cluster_idf(idf_array, n_docs, aggregator='max'):
 
 
 
-class TfidfCounter:
-    def __init__(self, tfidfvectorizer):
-        self.tfidfvectorizer = tfidfvectorizer
-        self.cleaner = tfidfvectorizer[0]
-        self.vocabulary = tfidfvectorizer[-1].vocabulary_
-        self.analyzer = tfidfvectorizer[-1].analyzer
+class TfidfCounter(_BaseEmbeddingClass):
+    def __init__(self, vectorizer):
+        self.vectorizer = vectorizer
+
+        xvect = self._find_vectorizer_instance()
+        self.vocabulary = xvect.vocabulary_
+        self.analyzer = xvect.analyzer
         self.counter = CountVectorizer(analyzer=self.analyzer, vocabulary=self.vocabulary)
 
         self.pipe = self._make_pipeline()
@@ -83,8 +83,8 @@ class TfidfCounter:
         
         last_step = ('vectorizer', self.counter)
 
-        if isinstance(self.tfidfvectorizer, sklearn.pipeline.Pipeline):
-            pipe = Pipeline(steps=[x for x in self.tfidfvectorizer.steps[:-1]])
+        if isinstance(self.vectorizer, sklearn.pipeline.Pipeline):
+            pipe = Pipeline(steps=[x for x in self.vectorizer.steps[:-1]])
             pipe.steps.append(last_step)
         else:
             pipe = Pipeline(steps=[last_step])
@@ -104,7 +104,7 @@ class TfidfCounter:
         return self.counter.inverse_transform(X)
 
 
-class ClusterTfidf(_BaseEmbeddingClass):
+class ClusterTfidfVectorizer(_BaseEmbeddingClass):
     def __init__(self, 
                  vectorizer,
                  embeddings,
@@ -114,7 +114,8 @@ class ClusterTfidf(_BaseEmbeddingClass):
                  load_clustering=False,
                  embedding_dim=None,
                  checkterm='test',
-                 n_top_clusters=7):
+                 n_top_clusters=7,
+                 distance_threshold=0.5):
         """
         Class for computing Cluster TfIdf.
         on a cluster level.
@@ -143,7 +144,11 @@ class ClusterTfidf(_BaseEmbeddingClass):
         self.counter = TfidfCounter(self.vectorizer)
         self.n_top_clusters = n_top_clusters
 
-        self.clustering  = EmbeddingCluster(embeddings=embeddings, vectorizer=vectorizer, distance_threshold=0.5, n_words=40000)
+        self.clustering  = EmbeddingCluster(embeddings=embeddings, 
+                                            vectorizer=vectorizer, 
+                                            distance_threshold=distance_threshold, 
+                                            n_words=40000,
+                                            checkterm=checkterm)
         
         self.load_clustering = load_clustering
         if load_clustering:
@@ -151,9 +156,9 @@ class ClusterTfidf(_BaseEmbeddingClass):
         
         # Get embedding dimensionality by checking against some Word.
         if embedding_dim:
-            self.embedding_dim = embedding_dim
+            self._embedding_dim = embedding_dim
         else:
-            self.embedding_dim = self._get_embedding_dim(embeddings, checkterm=checkterm)
+            self._embedding_dim = self._get_embedding_dim(embeddings, checkterm=checkterm)
 
 
     # HACK: fit method is not required
@@ -232,7 +237,7 @@ class ClusterTfidf(_BaseEmbeddingClass):
 
         n_clustered_rows = 0
 
-        result = np.zeros( (len(X), self.embedding_dim) )
+        result = np.zeros( (len(X), self._embedding_dim) )
         for row_index, row in enumerate(tqdm(vects)):
 
             do_reporting = False
