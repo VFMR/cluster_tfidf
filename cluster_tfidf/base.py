@@ -2,7 +2,7 @@ import numpy as np
 import sklearn
 from tqdm import tqdm
 
-from utils import clean_term
+from .utils import clean_term
 
 class BaseEmbeddingClass:
     def __init__(self, embeddings, vectorizer):

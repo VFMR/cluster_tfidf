@@ -11,8 +11,8 @@ import sklearn
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.pipeline import Pipeline
 
-from utils import clean_term, count_file_rows
-from clustering import EmbeddingCluster
+from .utils import clean_term, count_file_rows
+from .clustering import EmbeddingCluster
 
 
 def get_df(idf, n_docs):

@@ -11,8 +11,8 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import MinMaxScaler
 
-from base import BaseEmbeddingClass
-from utils import clean_term
+from .base import BaseEmbeddingClass
+from .utils import clean_term
 
 class EmbeddingCluster(BaseEmbeddingClass):
     def __init__(self, 

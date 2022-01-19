@@ -1,4 +1,4 @@
-from utils import cosine_sim_words
+from .utils import cosine_sim_words
 
 def check_pairs(lst, embeddings):
     for row in lst:
