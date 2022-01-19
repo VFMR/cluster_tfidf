@@ -15,6 +15,7 @@ from sklearn.preprocessing import MinMaxScaler
 from .base import BaseEmbeddingClass
 from .utils import clean_term
 
+
 class EmbeddingCluster(BaseEmbeddingClass):
     def __init__(self, 
                  embeddings,
@@ -94,12 +95,12 @@ class EmbeddingCluster(BaseEmbeddingClass):
         return self._multi_cluster_func(self.index2cluster.values())
 
 
-    def get_n_clusters(self):
+    def _get_n_clusters(self):
         return len(self._get_multi_clusters())
 
-    def _clustering_split(self, split, cluster=True):
+
+    def _update_clusters(self, split, cluster=True):
         split_indices = [x[1] for x in split]
-        split_words = [x[0] for x in split]
         X_embeds = np.array([x[2] for x in split])
         norm = np.linalg.norm
         self.norms = self.norms+[norm(x) for x in X_embeds]
@@ -112,6 +113,7 @@ class EmbeddingCluster(BaseEmbeddingClass):
         index2cluster = {ix: c for ix, c in zip(split_indices, clusters)}
         self.index2cluster.update(index2cluster)
         self.maxcluster = max([x for x in self.index2cluster.values()])
+
 
     def _fix_missing_clusters(self):
         missing_ix = [ix for ix in self.index2word.keys() if not ix in self.index2cluster.keys()]
@@ -153,23 +155,13 @@ class EmbeddingCluster(BaseEmbeddingClass):
         indices = []
 
 
-        # agglomerative clustering cannot handle all data. Thus make three random splits
-        # and cluster each of these
-        
-        if self.clustermethod=='agglomerative':
-            X_splits = np.array_split(X_top, 3)
-        else:  # Kmeans can cluster all words at once
-            X_splits = [X_top]
+        embedded_array = [(x[0], x[1], self.embeddings[x[0]]) for x in X_top]
 
-        # deactivate this in case it cannot be run!
-        X_splits = [X_top]
-        
-        for split in tqdm(X_splits, desc='Clustering'):
-            embedded_split = [(x[0], x[1], self.embeddings[x[0]]) for x in split]
-            excluded = excluded+[x for x in embedded_split if not x[2].any()]
-            embedded_split = [x for x in embedded_split if x[2].any()]
-            indices = indices+[x[1] for x in embedded_split]
-            self._clustering_split(embedded_split)
+        # remove all terms that have zero-vector, i.e. oov
+        excluded = excluded+[x for x in embedded_array if not x[2].any()]
+        embedded_array = [x for x in embedded_array if x[2].any()]
+        indices = indices+[x[1] for x in embedded_array]
+        self._update_clusters(embedded_array)
 
         # manually add "clusters" for left out terms:
         X_bottom_w_embeddings = [(x[0], x[1], self.embeddings[x[0]]) for x in X_bottom]

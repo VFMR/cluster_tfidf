@@ -5,39 +5,52 @@ from tqdm import tqdm
 from .utils import clean_term
 
 class _BaseEmbeddingClass:
-    def __init__(self, embeddings, vectorizer):
+    def __init__(self, embeddings, vectorizer, checkterm='test'):
         """
         """
         # input
         self.embeddings = embeddings
         self.vectorizer = vectorizer
 
-        # checks
         xvect = self._find_vectorizer_instance()
-        if not isinstance(xvect, sklearn.feature_extraction.text.TfidfVectorizer):
-            raise ValueError(f"""
-                Vectorizer must be either a sklearn.feature_extraction.text.TfidfVectorizer
-                instance or an sklearn.pipeline.Pipeline instance with 
-                sklearn.feature_extraction.text.TfidfVectorizer being the last step.
-                {type(xvect)} was provided instead.
-                """)
-        self.vocabulary = {clean_term(term): str(ix) for term, ix in xvect.vocabulary_.items()}
+        # BUG: for some reason a error occurs when cleaning terms.
+        # However, cleaning should be done
+        # self.vocabulary = {clean_term(term): str(ix) for term, ix in xvect.vocabulary_.items()}
         self.vocabulary = xvect.vocabulary_.items()
 
         # retrieve values:
-        self.embedding_dim = len(embeddings['test'])
+        self.embedding_dim = self._get_embedding_dim(self.embeddings, checkterm=checkterm)
+
+
+    def _embedding_lookup(self, term):
+        try:
+            result = self.embeddings[term]
+        except:
+            result = np.zeros(self.embedding_dim)
+        return result
+
+
+    def _get_embedding_dim(self, embeddings, checkterm='test'):
+        array = embeddings[checkterm]
+        if len(array)==1:
+            embedding_dim = len(array[0])
+        else:
+            embedding_dim = len(array)
+        return embedding_dim
 
 
     def _embed_array_of_words(self, X):
         array = np.zeros( (len(X), self.embedding_dim) )
         for i, word in enumerate(tqdm(X, desc='Embedding lookup')):
-            array[i] = self.embeddings[word]
+            array[i] = self._embedding_lookup(word)
 
         # remove OOV Words:
         return self._remove_oov(array)
 
+
     def _remove_oov(self, array):
         return array[~(array==0).all(1)] 
+
 
     # REMOVE This appears to do nothing:
     # def _padding(self, X):
@@ -85,11 +98,29 @@ class _BaseEmbeddingClass:
     #     return result
 
 
+    def _is_tfidf(self, obj):
+        return isinstance(obj, sklearn.feature_extraction.text.TfidfVectorizer)
+
+
     def _find_vectorizer_instance(self):
-        if isinstance(self.vectorizer, sklearn.pipeline.Pipeline):
-            vectorizer = self.vectorizer[-1]
-        else:
+        vect_error = False
+        if self._is_tfidf(self.vectorizer):
             vectorizer = self.vectorizer
+        elif isinstance(self.vectorizer, sklearn.pipeline.Pipeline):
+            if self._is_tfidf(self.vectorizer[-1]):
+                vectorizer  = self.vectorizer[-1]
+            else:
+                vect_error = True
+        else:
+            vect_error = True
+
+        if vect_error:
+            raise ValueError(f"""
+                Vectorizer must be either a sklearn.feature_extraction.text.TfidfVectorizer
+                instance or an sklearn.pipeline.Pipeline instance with 
+                sklearn.feature_extraction.text.TfidfVectorizer being the last step.
+                """)
+
         return vectorizer
 
 

@@ -113,6 +113,7 @@ class ClusterTfidf(_BaseEmbeddingClass):
                  corpus_path_encoding='latin1',
                  load_clustering=False,
                  embedding_dim=None,
+                 checkterm='test',
                  n_top_clusters=7):
         """
         Class for computing Cluster TfIdf.
@@ -152,21 +153,7 @@ class ClusterTfidf(_BaseEmbeddingClass):
         if embedding_dim:
             self.embedding_dim = embedding_dim
         else:
-            self.embedding_dim = self._get_embedding_dim(checkterm='test')
-
-
-        # if not self.refit:
-        #     self.index2word = self.clustering.index2word
-        #     self.word2index = self.clustering.word2index
-
-
-    def _get_embedding_dim(self, checkterm='test'):
-        array = self.embeddings[checkterm]
-        if len(array)==1:
-            embedding_dim = len(array[0])
-        else:
-            embedding_dim = len(array)
-        return embedding_dim
+            self.embedding_dim = self._get_embedding_dim(embeddings, checkterm=checkterm)
 
 
     # HACK: fit method is not required
