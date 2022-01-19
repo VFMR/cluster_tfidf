@@ -1,5 +1,8 @@
 import math
 import random
+from statistics import mean
+
+from base import BaseEmbeddingClass
 RND = 42
 random.seed(RND)
 
@@ -13,6 +16,7 @@ from sklearn.pipeline import Pipeline
 
 from .utils import clean_term, count_file_rows
 from .clustering import EmbeddingCluster
+from .base import BaseEmbeddingClass
 
 
 def get_df(idf, n_docs):
@@ -30,7 +34,8 @@ def get_df(idf, n_docs):
     df_1 = n_by_df_1/n_docs
     return df_1 - 1
 
-def get_cluster_idf(idf_array, n_docs):
+
+def get_cluster_idf(idf_array, n_docs, aggregator='max'):
     """Aggregation of idf for the cluster.
     It is not quite clear how to aggregate: summing over individual
     idfs would assume words are always separate, taking the max would assume they
@@ -39,12 +44,27 @@ def get_cluster_idf(idf_array, n_docs):
     Args:
         idf_array ([type]): [description]
         n_docs ([type]): [description]
+        aggregator (str or callable): function to approximate
+            the aggregated document frequency from individual ones. 
+            Can be {'max', 'min', 'mean',} or callable.
+            Defaults to 'max' to use the maximum df.
 
     Returns:
         [type]: [description]
     """
-    # use max() to approximate the df!
-    df = max([get_df(x, n_docs) for x in idf_array])
+    if isinstance(aggregator, str) and aggregator in ['min', 'max', 'mean']:
+        if aggregator=='max':
+            func = max
+        elif aggregator=='min':
+            func = min
+        elif aggregator=='mean':
+            func = mean
+    elif callable(aggregator):
+        func = aggregator
+    else:
+        raise ValueError('aggregator must be one of {"max", "min", "mean"} or callable')
+    
+    df = func([get_df(x, n_docs) for x in idf_array])
     return math.log(n_docs/(df+1))
 
 
@@ -84,10 +104,13 @@ class TfidfCounter:
         return self.counter.inverse_transform(X)
 
 
-class ClusterTfidf:
+class ClusterTfidf(BaseEmbeddingClass):
     def __init__(self, 
                  vectorizer,
                  embeddings,
+                 n_docs,
+                 corpus_path=None,
+                 corpus_path_encoding='latin1',
                  load_clustering=False,
                  load_clustering_dir=None,
                  load_clustering_name='clustertfidf',
@@ -106,6 +129,17 @@ class ClusterTfidf:
             distance_threshold (float): Distance threshold for agglomerative clustering
         """
         # inputs:
+        if n_docs:
+            if isinstance(n_docs, int):
+                self.n_docs = n_docs
+            else:
+                raise ValueError('n_docs must be of type int')
+        else:
+            if corpus_path:
+                self.n_docs = count_file_rows(corpus_path, encoding=corpus_path_encoding)
+            else:
+                raise ValueError('either n_docs or corpus_path must be specified')
+
         self.vectorizer = vectorizer
         self.counter = TfidfCounter(self.vectorizer)
         self.n_top_clusters = n_top_clusters
@@ -116,6 +150,8 @@ class ClusterTfidf:
         if load_clustering:
             self.clustering.load(dir=load_clustering_dir, name=load_clustering_name)
         self.embedding_dim = embedding_dim
+
+
 
 
         # if not self.refit:
@@ -159,13 +195,6 @@ class ClusterTfidf:
         return pd.Series(new_X)
 
 
-    def _find_vectorizer_instance(self):
-        if isinstance(self.vectorizer, sklearn.pipeline.Pipeline):
-            vectorizer = self.vectorizer[-1]
-        else:
-            vectorizer = self.vectorizer
-        return vectorizer
-
 
     def _get_idf(self):
         vect = self._find_vectorizer_instance()
@@ -180,8 +209,7 @@ class ClusterTfidf:
         counts = self.counter.transform(X)
         idf = self._get_idf()
 
-        print('Count documents')
-        n_docs = count_file_rows(path='../../Output/Data/prepared_data_all.csv')
+        n_docs = self.n_docs
         
         embeddings = self.clustering.embeddings
         index2cluster = self.clustering.index2cluster
@@ -213,9 +241,9 @@ class ClusterTfidf:
             cluster_weights = []
             append_v = cluster_vectors.append
             append_w = cluster_weights.append
-            # all_cluster_tf = get_cluster_tf(clusters)
 
-            # TODO: This is ugly and inefficient because I do this loop twice. Find better solution
+
+            # HACK: This is ugly and inefficient because I do this loop twice.
             max_count = nonzero_counts.max()
             for c in unique_clusters:
                 cluster_ix = [i for i, cl in enumerate(clusters) if cl==c]
