@@ -115,7 +115,10 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
                  embedding_dim=None,
                  checkterm='test',
                  n_top_clusters=7,
-                 distance_threshold=0.5):
+                 clustermethod='agglomerative',
+                 distance_threshold=0.5,
+                 n_top_words=40000,
+                 cluster_share=0.2):
         """
         Class for computing Cluster TfIdf.
         on a cluster level.
@@ -145,15 +148,17 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
         self.n_top_clusters = n_top_clusters
 
         self.clustering  = EmbeddingCluster(embeddings=embeddings, 
-                                            vectorizer=vectorizer, 
+                                            vectorizer=vectorizer,
+                                            clustermethod=clustermethod,
                                             distance_threshold=distance_threshold, 
-                                            n_words=40000,
-                                            checkterm=checkterm)
+                                            n_words=n_top_words,
+                                            cluster_share=cluster_share,
+                                            checkterm=checkterm,)
         
         self.load_clustering = load_clustering
         if load_clustering:
             self.clustering.load(load_clustering)
-        
+
         # Get embedding dimensionality by checking against some Word.
         if embedding_dim:
             self._embedding_dim = embedding_dim
