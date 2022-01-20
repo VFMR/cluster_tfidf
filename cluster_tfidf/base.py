@@ -92,3 +92,4 @@ class _BaseEmbeddingClass:
 
     def _get_word2index(self, index2word):
         return {value: key for key, value in index2word.items()}
+

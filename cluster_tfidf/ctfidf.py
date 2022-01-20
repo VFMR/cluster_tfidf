@@ -112,10 +112,10 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
                  embedding_dim=None,
                  checkterm='test',
                  n_top_clusters=7,
+                 cluster_share=0.2,
                  clustermethod='agglomerative',
                  distance_threshold=0.5,
-                 n_top_words=40000,
-                 cluster_share=0.2):
+                 n_words=40000,):
         """
         Class for computing Cluster TfIdf.
         on a cluster level.
@@ -129,6 +129,23 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
             distance_threshold (float): Distance threshold for agglomerative clustering
         """
         # inputs:
+        self.base_args = [
+            'vectorizer'
+            'embeddings'
+            'n_docs'
+            'corpus_path'
+            'corpus_path_encoding'
+            'load_clustering'
+            'embedding_dim'
+            'checkterm'
+            'n_top_clusters'
+            'clustermethod'
+            'distance_threshold'
+            'n_top_words'
+            'cluster_share'
+        ]
+
+        # checks
         if n_docs:
             if isinstance(n_docs, int):
                 self.n_docs = n_docs
@@ -148,7 +165,7 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
                                             vectorizer=vectorizer,
                                             clustermethod=clustermethod,
                                             distance_threshold=distance_threshold, 
-                                            n_words=n_top_words,
+                                            n_words=n_words,
                                             cluster_share=cluster_share,
                                             checkterm=checkterm,)
         
@@ -161,6 +178,25 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
             self._embedding_dim = embedding_dim
         else:
             self._embedding_dim = self._get_embedding_dim(embeddings, checkterm=checkterm)
+
+
+    def set_params(self, **kwargs):
+        print(self.__dict__)
+        own_params = {key: value for key, value in kwargs.items() if key in self.__dict__}
+        model_params = {key: value for key, value in kwargs.items() if key not in self.__dict__}
+        for key, value in own_params.items():
+            self.__dict__.update({key: value})
+        
+        self.clustering.set_params(**model_params)
+
+
+    def get_params(self):
+        params = self.__dict__
+        params.update(self.clustering.get_params())
+
+        # exclude "private" parameters:
+        params = {key: value for key, value in params.items() if not key.startswith('_')}
+        return params
 
 
     # HACK: fit method is not required
@@ -214,13 +250,12 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
         return pd.Series(new_X)
 
 
-
     def _get_idf(self):
         vect = self._find_vectorizer_instance()
         return vect.idf_
 
+
     def predict(self, X):
-        # tfidf:
         X = self._input_cleanup(X)
 
         print('Vectorize texts')
@@ -261,7 +296,6 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
             append_v = cluster_vectors.append
             append_w = cluster_weights.append
 
-
             # HACK: This is ugly and inefficient because I do this loop twice.
             max_count = nonzero_counts.max()
             for c in unique_clusters:
@@ -272,7 +306,6 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
 
             for c in unique_clusters:
                 cluster_ix = [i for i, cl in enumerate(clusters) if cl==c]
-
 
                 cluster_tf = sum(nonzero_counts[cluster_ix]) / max_count
                 

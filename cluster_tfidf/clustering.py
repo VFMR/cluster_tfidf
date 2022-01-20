@@ -4,7 +4,6 @@ import os
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import MinMaxScaler
@@ -21,7 +20,8 @@ class EmbeddingCluster(_BaseEmbeddingClass):
                  distance_threshold=0.4,
                  n_words=False,
                  cluster_share=0.2,
-                 checkterm='test'):
+                 checkterm='test',
+                 **kwargs):
         """[summary]
 
         Args:
@@ -40,34 +40,76 @@ class EmbeddingCluster(_BaseEmbeddingClass):
         self.clustermethod = clustermethod
         self.distance_threshold = distance_threshold
 
-        # checks:
-        allowed_clustermethods = ['agglomerative', 'kmeans']
-        if clustermethod not in allowed_clustermethods:
-            raise ValueError(f"""Inappropriate argument value for 'clustermethod'. 
-                                 Must be one of {allowed_clustermethods}""")
+        self.model = self._get_cluster_model(**kwargs)
 
         self.index2word = self._get_index2word()
         self.word2index = self._get_word2index(self.index2word)
 
         if n_words:
-            self._n_words = min(n_words, len(self.index2word))
+            self.n_words = min(n_words, len(self.index2word))
         else:
-            self._n_words = len(self.index2word)
-        self._n_clusters = int(cluster_share*self._n_words)
+            self.n_words = len(self.index2word)
+        self._n_clusters = int(cluster_share*self.n_words)
 
         # restrict embeddings to relevant words to save memory
         self.embeddings = {word: self._embedding_lookup(word) for word in self.index2word.values()}
 
 
-    def _get_cluster_model(self):
-        if self.clustermethod=='agglomerative':
-            model = AgglomerativeClustering(n_clusters=None,
-                                            affinity='cosine',
-                                            distance_threshold=self.distance_threshold,
-                                            linkage='average')
-        elif self.clustermethod=='kmeans':
-            model = KMeans(n_clusters=self._n_clusters, n_jobs=-1)
+    def _get_cluster_model(self, **kwargs):
+        allowed_clustermethods = ['agglomerative', 'kmeans']
+        throw_error = False
+
+        if isinstance(self.clustermethod, str):
+            if self.clustermethod in allowed_clustermethods:
+                if self.clustermethod=='agglomerative':
+
+                    # define standard parameters and update those set by user:
+                    model_args = {
+                        'n_clusters': None,
+                        'affinity': 'cosine',
+                        'distance_threshold': self.distance_threshold,
+                        'linkage': 'average'
+                    }
+                    model_args.update(kwargs)
+                    
+                    model = AgglomerativeClustering(**model_args)
+                elif self.clustermethod=='kmeans':
+                    model_args = {
+                        'n_clusters': self._n_clusters,
+                        'n_jobs': -1
+                    }
+                    model_args.update(kwargs)
+                    model = KMeans(**model_args)
+            else:
+                raise ValueError(f"""Inappropriate argument value for 'clustermethod'. 
+                             Must be one of {allowed_clustermethods}""")
+        
+        else:
+            try:
+                model = self.clustermethod(**kwargs)
+            except:
+                model = self.clustermethod
+                model.set_params(**kwargs)
+            
         return model
+
+
+    def set_params(self, **kwargs):
+        own_params = {key: value for key, value in kwargs.items() if key in self.__dict__}
+        model_params = {key: value for key, value in kwargs.items() if key not in self.__dict__}
+        for key, value in own_params.items():
+            self.__dict__.update({key: value})
+        
+        self.model.set_params(**model_params)
+
+
+    def get_params(self):
+        params = self.__dict__
+        params.update(self.model.get_params())
+        
+        # exclude "private" parameters:
+        params = {key: value for key, value in params.items if not key.startswith('_')}
+        return params
 
 
     def _find_top_words(self):
@@ -139,11 +181,9 @@ class EmbeddingCluster(_BaseEmbeddingClass):
         Returns
             np.array
         """
-        self.model = self._get_cluster_model()
-        # X = [(x[0], x[1]) for x in self.vocabulary
         X = self._find_top_words()
-        X_top = X[:self._n_words]
-        X_bottom = X[self._n_words:]
+        X_top = X[:self.n_words]
+        X_bottom = X[self.n_words:]
         
         random.shuffle(X_top)
         
