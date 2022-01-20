@@ -2,12 +2,8 @@ import math
 import random
 from statistics import mean
 
-RND = 42
-random.seed(RND)
-
 from tqdm import tqdm
 import numpy as np
-np.random.seed(RND)
 import pandas as pd
 import sklearn
 from sklearn.feature_extraction.text import CountVectorizer
@@ -16,6 +12,7 @@ from sklearn.pipeline import Pipeline
 from .utils import clean_term, count_file_rows
 from .clustering import EmbeddingCluster
 from .base import _BaseEmbeddingClass
+
 
 
 def get_df(idf, n_docs):

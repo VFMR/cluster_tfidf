@@ -1,12 +1,8 @@
 import random
-from subprocess import NORMAL_PRIORITY_CLASS
-RND = 42
-random.seed(RND)
 import json
 import os
 
 import numpy as np
-np.random.seed(RND)
 import pandas as pd
 from tqdm import tqdm
 from sklearn.cluster import AgglomerativeClustering
@@ -70,7 +66,7 @@ class EmbeddingCluster(_BaseEmbeddingClass):
                                             distance_threshold=self.distance_threshold,
                                             linkage='average')
         elif self.clustermethod=='kmeans':
-            model = KMeans(n_clusters=self._n_clusters, random_state=RND, n_jobs=-1)
+            model = KMeans(n_clusters=self._n_clusters, n_jobs=-1)
         return model
 
 
