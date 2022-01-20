@@ -8,6 +8,7 @@ import pandas as pd
 import sklearn
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.pipeline import Pipeline
+from sklearn.base import TransformerMixin
 
 from .utils import clean_term, count_file_rows
 from .clustering import EmbeddingCluster
@@ -101,7 +102,7 @@ class TfidfCounter(_BaseEmbeddingClass):
         return self.counter.inverse_transform(X)
 
 
-class ClusterTfidfVectorizer(_BaseEmbeddingClass):
+class ClusterTfidfVectorizer(_BaseEmbeddingClass, TransformerMixin):
     def __init__(self, 
                  vectorizer,
                  embeddings,
@@ -199,10 +200,7 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
         return params
 
 
-    # HACK: fit method is not required
-    # Only here to make user interface simpler.
-    # This may be solvable with better name for cluster_vocab method.
-    def fit(self, savedir=None, savename='clustertfidf'):
+    def fit(self, X=None, y=None, savedir=None, savename='clustertfidf'):
         """Convenience function to have a fit methods.
         Only calls the cluster_vocab method in its place.
 
@@ -210,20 +208,11 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
             savedir ([type], optional): [description]. Defaults to None.
             savename (str, optional): [description]. Defaults to 'clustertfidf'.
         """
-        self.cluster_vocab(savedir, savename)
-
-
-    def cluster_vocab(self, savedir=None, savename='clustertfidf'):
-        """Method to fit the Tfidf if self.refit and to compute the clusters on
-            on an array of words.
-
-        Args:
-            X (iterable): Array of strings, i.e. non-tokenized texts.
-        """
         self.clustering.fit()
         if savedir:
             self.clustering.save(dir=savedir, name=savename)
         return self
+
 
 
     def _multi_cluster_func(self, array):
@@ -255,7 +244,7 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass):
         return vect.idf_
 
 
-    def predict(self, X):
+    def transform(self, X):
         X = self._input_cleanup(X)
 
         print('Vectorize texts')
