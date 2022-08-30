@@ -1,4 +1,3 @@
 tests/*
 *.pyc
-cluster_tfidf.egg-info/SOURCES.tx
 cluster_tfidf.egg-info/*
