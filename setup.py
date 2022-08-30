@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='cluster_tfidf',
-    version='1.0',
+    version='0.1',
     description='A module to compute the Cluster TFIDF method',
     author='VFMR',
     packages=['cluster_tfidf'],  #same as name
