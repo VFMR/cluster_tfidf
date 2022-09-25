@@ -49,7 +49,7 @@ class _BaseEmbeddingClass:
 
 
     def _remove_oov(self, array):
-        return array[~(array==0).all(1)] 
+        return array[~(array==0).all(1)]
 
 
     def _is_tfidf(self, obj):
@@ -63,6 +63,8 @@ class _BaseEmbeddingClass:
         elif isinstance(self.vectorizer, sklearn.pipeline.Pipeline):
             if self._is_tfidf(self.vectorizer[-1]):
                 vectorizer  = self.vectorizer[-1]
+            elif self._is_tfidf(self.vectorizer[-1][1]):
+                vectorizer = self.vectorizer[-1][1]
             else:
                 vect_error = True
         else:
@@ -71,7 +73,7 @@ class _BaseEmbeddingClass:
         if vect_error:
             raise ValueError(f"""
                 Vectorizer must be either a sklearn.feature_extraction.text.TfidfVectorizer
-                instance or an sklearn.pipeline.Pipeline instance with 
+                instance or an sklearn.pipeline.Pipeline instance with
                 sklearn.feature_extraction.text.TfidfVectorizer being the last step.
                 """)
 
@@ -84,7 +86,7 @@ class _BaseEmbeddingClass:
 
 
     def _get_index2word(self):
-        vectorizer = self._find_vectorizer_instance()     
+        vectorizer = self._find_vectorizer_instance()
         index2word = {str(i): clean_term(term) for term, i in vectorizer.vocabulary_.items()}
 
         return index2word
