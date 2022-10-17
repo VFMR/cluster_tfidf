@@ -17,7 +17,7 @@ from .base import _BaseEmbeddingClass
 
 def get_df(idf, n_docs):
     """idf(t) = log(N / document_frequency)
-       -> document_frequency = exp(idf) / N
+       -> document_frequency = N / exp(idf)
 
     Args:
         idf ([type]): [description]
@@ -27,7 +27,7 @@ def get_df(idf, n_docs):
         [type]: [description]
     """
     n_by_df_1 = math.exp(idf)
-    df_1 = n_by_df_1/n_docs
+    df_1 = n_docs / n_by_df_1
     return df_1 - 1
 
 
