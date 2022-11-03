@@ -26,8 +26,8 @@ def get_df(idf, n_docs):
     Returns:
         [type]: [description]
     """
-    n_by_df_1 = math.exp(idf)
-    df_1 = n_docs / n_by_df_1
+    e_idf = math.exp(idf)
+    df_1 = n_docs / e_idf
     return df_1 - 1
 
 
