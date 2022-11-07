@@ -275,8 +275,8 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass, TransformerMixin):
             result = np.zeros( (len(X), self._embedding_dim) )
         else:
             result = {
-                'vectors': np.zeros( (len(X), self._n_top_clusters, self._embedding_dim) ),
-                'weights': np.zeros( (len(X), self._n_top_clusters) )
+                'vectors': [],
+                'weights': []  #np.zeros( (len(X), self._n_top_clusters) )
                 }
         for row_index, row in enumerate(vects):
 
@@ -351,8 +351,8 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass, TransformerMixin):
             if aggregate_world_level:
                 result[row_index] = top_weights@top_embeds
             else:
-                result['weights'][row_index] = top_weights
-                result['vectors'][row_index] = top_embeds
+                result['weights'].append(top_weights)
+                result['vectors'].append(top_embeds)
 
 
             # Reporting
