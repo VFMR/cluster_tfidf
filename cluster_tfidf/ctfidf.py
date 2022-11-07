@@ -348,7 +348,7 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass, TransformerMixin):
             top_weights = [x[0] for x in top_vecs]
             tw_sum = sum(top_weights)
             top_weights = np.array([x/tw_sum for x in top_weights])
-            if aggregate_world_level:
+            if aggregate_word_level:
                 result[row_index] = top_weights@top_embeds
             else:
                 result['weights'].append(top_weights)
