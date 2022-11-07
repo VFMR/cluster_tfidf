@@ -253,7 +253,7 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass, TransformerMixin):
         return vect.idf_
 
 
-    def transform(self, X):
+    def transform(self, X, aggregate_word_level=True):
         X = self._input_cleanup(X)
 
         vects = self.vectorizer.transform(X)
@@ -271,8 +271,13 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass, TransformerMixin):
         pd_Series = pd.Series
 
         n_clustered_rows = 0
-
-        result = np.zeros( (len(X), self._embedding_dim) )
+        if aggregate_word_level:
+            result = np.zeros( (len(X), self._embedding_dim) )
+        else:
+            result = {
+                'vectors': np.zeros( (len(X), self._n_top_clusters, self._embedding_dim) ),
+                'weights': np.zeros( (len(X), self._n_top_clusters) )
+                }
         for row_index, row in enumerate(vects):
 
             do_reporting = False
@@ -343,7 +348,12 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass, TransformerMixin):
             top_weights = [x[0] for x in top_vecs]
             tw_sum = sum(top_weights)
             top_weights = np.array([x/tw_sum for x in top_weights])
-            result[row_index] = top_weights@top_embeds
+            if aggregate_world_level:
+                result[row_index] = top_weights@top_embeds
+            else:
+                result['weights'][row_index] = top_weights
+                result['vectors'][row_index] = top_embeds
+
 
             # Reporting
             # if do_reporting:
