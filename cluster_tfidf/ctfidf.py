@@ -299,7 +299,7 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass, TransformerMixin):
             append_v = cluster_vectors.append
             append_w = cluster_weights.append
 
-            # HACK: This is ugly and inefficient because I do this loop twice.
+            # HACK: I do this loop twice.
             max_count = nonzero_counts.max()
             for c in unique_clusters:
                 cluster_ix = [i for i, cl in enumerate(clusters) if cl==c]

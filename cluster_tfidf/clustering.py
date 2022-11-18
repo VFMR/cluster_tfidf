@@ -1,6 +1,7 @@
 import random
 import json
 import os
+from zipfile import ZipFile
 
 import numpy as np
 import pandas as pd
@@ -267,24 +268,28 @@ class EmbeddingCluster(_BaseEmbeddingClass):
             with open(filename, 'w') as f:
                 json.dump(value, f)
 
-
-    def _load_obj(self, file):
-        with open(file+'.json', 'r') as f:
-            content = f.read()
-            result = json.loads(content)
+    def _load_obj(self, file: str, archive: ZipFile = None):
+        if archive is None:
+            with open(file+'.json', 'r') as f:
+                content = f.read()
+                result = json.loads(content)
+        else:
+            with archive.open(file+'.json', 'r') as f:
+                content = f.read()
+                result = json.loads(content)
         return result
 
-
-    def load(self, path):
+    def load(self, path: str, archive: ZipFile = None):
         """[summary]
 
         Args:
             path (str): Name of the directory that holds the results from save method.
         """
-        self.index2word = self._load_obj(path+'/index2word')
-        self.word2index = self._load_obj(path+'/word2index')
-        self.index2norm = self._load_obj(path+'/index2norm')
-        self.index2cluster = self._load_obj(path+'/index2cluster')
+        self.index2word = self._load_obj(path+'/index2word', archive=archive)
+        self.word2index = self._load_obj(path+'/word2index', archive=archive)
+        self.index2norm = self._load_obj(path+'/index2norm', archive=archive)
+        self.index2cluster = self._load_obj(path+'/index2cluster', archive=archive)
+
 
         # make sure values are numeric:
         self.index2norm = {key: float(value) for key, value in self.index2norm.items()}
