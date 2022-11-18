@@ -1,6 +1,7 @@
 import math
 import random
 from statistics import mean
+from zipfile import ZipFile
 
 import numpy as np
 import pandas as pd
@@ -220,8 +221,8 @@ class ClusterTfidfVectorizer(_BaseEmbeddingClass, TransformerMixin):
         self.clustering.save(dir=dir, name=name)
 
 
-    def load(self, path):
-        self.clustering.load(path=path)
+    def load(self, path: str, archive: ZipFile = None):
+        self.clustering.load(path=path, archive=archive)
 
 
     def _multi_cluster_func(self, array):
