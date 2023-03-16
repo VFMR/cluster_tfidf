@@ -13,6 +13,8 @@ setup(
     extras_require={
         'dev': [
             'pytest',
+            'sphinx',
+            'sphinx_rtd_theme'
             ]
         }
 )
