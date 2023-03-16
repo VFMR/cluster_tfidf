@@ -1,3 +1,4 @@
 tests/*
 *.pyc
 cluster_tfidf.egg-info/*
+*/.vscode/*

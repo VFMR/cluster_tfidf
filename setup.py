@@ -6,5 +6,13 @@ setup(
     description='A module to compute the Cluster TFIDF method',
     author='VFMR',
     packages=['cluster_tfidf'],  #same as name
-    install_requires=['pandas', 'scikit-learn', 'numpy', 'tqdm'], #external packages as dependencies
+    install_requires=['pandas', 
+                      'scikit-learn',
+                      'numpy',
+                      'tqdm'],
+    extras_require={
+        'dev': [
+            'pytest',
+            ]
+        }
 )
