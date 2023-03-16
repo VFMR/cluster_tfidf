@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>cluster_tfidf package &#8212; Cluster Tfidf 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="cluster_tfidf" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cluster-tfidf-package">
+<h1>cluster_tfidf package<a class="headerlink" href="#cluster-tfidf-package" title="Permalink to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-cluster_tfidf.analytics">
+<span id="cluster-tfidf-analytics-module"></span><h2>cluster_tfidf.analytics module<a class="headerlink" href="#module-cluster_tfidf.analytics" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cluster_tfidf.analytics.analyze_clusters">
+<span class="sig-prename descclassname"><span class="pre">cluster_tfidf.analytics.</span></span><span class="sig-name descname"><span class="pre">analyze_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clustering</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/analytics.html#analyze_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.analytics.analyze_clusters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cluster_tfidf.analytics.check_pairs">
+<span class="sig-prename descclassname"><span class="pre">cluster_tfidf.analytics.</span></span><span class="sig-name descname"><span class="pre">check_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeddings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/analytics.html#check_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.analytics.check_pairs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cluster_tfidf.base">
+<span id="cluster-tfidf-base-module"></span><h2>cluster_tfidf.base module<a class="headerlink" href="#module-cluster_tfidf.base" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-cluster_tfidf.clustering">
+<span id="cluster-tfidf-clustering-module"></span><h2>cluster_tfidf.clustering module<a class="headerlink" href="#module-cluster_tfidf.clustering" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cluster_tfidf.clustering.EmbeddingCluster">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cluster_tfidf.clustering.</span></span><span class="sig-name descname"><span class="pre">EmbeddingCluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectorizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clustermethod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'agglomerative'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_words</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_share</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkterm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'test'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/clustering.html#EmbeddingCluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.clustering.EmbeddingCluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseEmbeddingClass</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.clustering.EmbeddingCluster.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/clustering.html#EmbeddingCluster.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.clustering.EmbeddingCluster.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>[summary]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>iterable</em>) – corpus containing</p></li>
+<li><p><strong>selection</strong> (<em>str</em><em>, </em><em>optional</em>) – {random, corpus} Method to select word sample.
+‘random’ will use index2word to retrieve words. Defaults to ‘random’.</p></li>
+<li><p><strong>n_words</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of randomly selected words to consider for
+the clustering. Note that Agglomerative Clustering Memory is O(n**3).
+Defaults to 10,000</p></li>
+<li><p><strong>distance_thresh</strong> (<em>float</em><em>, </em><em>optional</em>) – Distance threshold to predict whether
+vector belongs to one of the clusters. Distance measured via Cosine
+distance.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.clustering.EmbeddingCluster.get_params">
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/clustering.html#EmbeddingCluster.get_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.clustering.EmbeddingCluster.get_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.clustering.EmbeddingCluster.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/clustering.html#EmbeddingCluster.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.clustering.EmbeddingCluster.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>[summary]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Name of the directory that holds the results from save method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.clustering.EmbeddingCluster.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'clustertfidf'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/clustering.html#EmbeddingCluster.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.clustering.EmbeddingCluster.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save to disk to allow using this model later on.
+Saves multiple files into a folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dir</strong> (<em>str</em>) – name of directory to save in.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name of the directory that is created to save</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.clustering.EmbeddingCluster.set_params">
+<span class="sig-name descname"><span class="pre">set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/clustering.html#EmbeddingCluster.set_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.clustering.EmbeddingCluster.set_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cluster_tfidf.ctfidf">
+<span id="cluster-tfidf-ctfidf-module"></span><h2>cluster_tfidf.ctfidf module<a class="headerlink" href="#module-cluster_tfidf.ctfidf" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.ClusterTfidfVectorizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cluster_tfidf.ctfidf.</span></span><span class="sig-name descname"><span class="pre">ClusterTfidfVectorizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vectorizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_docs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corpus_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corpus_path_encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'latin1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_clustering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkterm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'test'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_top_clusters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_share</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clustermethod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'agglomerative'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_words</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#ClusterTfidfVectorizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.ClusterTfidfVectorizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseEmbeddingClass</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TransformerMixin</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.ClusterTfidfVectorizer.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savedir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'clustertfidf'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#ClusterTfidfVectorizer.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.ClusterTfidfVectorizer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience function to have a fit methods.
+Only calls the cluster_vocab method in its place.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>savedir</strong> (<em>[</em><em>type</em><em>]</em><em>, </em><em>optional</em>) – [description]. Defaults to None.</p></li>
+<li><p><strong>savename</strong> (<em>str</em><em>, </em><em>optional</em>) – [description]. Defaults to ‘clustertfidf’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.ClusterTfidfVectorizer.get_params">
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#ClusterTfidfVectorizer.get_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.ClusterTfidfVectorizer.get_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.ClusterTfidfVectorizer.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#ClusterTfidfVectorizer.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.ClusterTfidfVectorizer.load" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.ClusterTfidfVectorizer.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'clustertfidf'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#ClusterTfidfVectorizer.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.ClusterTfidfVectorizer.save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.ClusterTfidfVectorizer.set_params">
+<span class="sig-name descname"><span class="pre">set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#ClusterTfidfVectorizer.set_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.ClusterTfidfVectorizer.set_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.ClusterTfidfVectorizer.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#ClusterTfidfVectorizer.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.ClusterTfidfVectorizer.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.TfidfCounter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cluster_tfidf.ctfidf.</span></span><span class="sig-name descname"><span class="pre">TfidfCounter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vectorizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#TfidfCounter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.TfidfCounter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseEmbeddingClass</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.TfidfCounter.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#TfidfCounter.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.TfidfCounter.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.TfidfCounter.fit_transform">
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#TfidfCounter.fit_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.TfidfCounter.fit_transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.TfidfCounter.inverse_transform">
+<span class="sig-name descname"><span class="pre">inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#TfidfCounter.inverse_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.TfidfCounter.inverse_transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.TfidfCounter.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#TfidfCounter.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.TfidfCounter.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.get_cluster_idf">
+<span class="sig-prename descclassname"><span class="pre">cluster_tfidf.ctfidf.</span></span><span class="sig-name descname"><span class="pre">get_cluster_idf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idf_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_docs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'max'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#get_cluster_idf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.get_cluster_idf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregation of idf for the cluster.
+It is not quite clear how to aggregate: summing over individual
+idfs would assume words are always separate, taking the max would assume they
+are mentioned together</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idf_array</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</p></li>
+<li><p><strong>n_docs</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</p></li>
+<li><p><strong>aggregator</strong> (<em>str</em><em> or </em><em>callable</em>) – function to approximate
+the aggregated document frequency from individual ones.
+Can be {‘max’, ‘min’, ‘mean’,} or callable.
+Defaults to ‘max’ to use the maximum df.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[description]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[type]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cluster_tfidf.ctfidf.get_df">
+<span class="sig-prename descclassname"><span class="pre">cluster_tfidf.ctfidf.</span></span><span class="sig-name descname"><span class="pre">get_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_docs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/ctfidf.html#get_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.ctfidf.get_df" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>idf(t) = log(N / document_frequency)</dt><dd><p>-&gt; document_frequency = N / exp(idf)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idf</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</p></li>
+<li><p><strong>n_docs</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[description]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[type]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-cluster_tfidf.random_seed">
+<span id="cluster-tfidf-random-seed-module"></span><h2>cluster_tfidf.random_seed module<a class="headerlink" href="#module-cluster_tfidf.random_seed" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cluster_tfidf.random_seed.seed">
+<span class="sig-prename descclassname"><span class="pre">cluster_tfidf.random_seed.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/random_seed.html#seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.random_seed.seed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cluster_tfidf.test_rng">
+<span id="cluster-tfidf-test-rng-module"></span><h2>cluster_tfidf.test_rng module<a class="headerlink" href="#module-cluster_tfidf.test_rng" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cluster_tfidf.test_rng.test_rng">
+<span class="sig-prename descclassname"><span class="pre">cluster_tfidf.test_rng.</span></span><span class="sig-name descname"><span class="pre">test_rng</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/test_rng.html#test_rng"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.test_rng.test_rng" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cluster_tfidf.tester">
+<span id="cluster-tfidf-tester-module"></span><h2>cluster_tfidf.tester module<a class="headerlink" href="#module-cluster_tfidf.tester" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cluster_tfidf.tester.PackageTester">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cluster_tfidf.tester.</span></span><span class="sig-name descname"><span class="pre">PackageTester</span></span><a class="reference internal" href="_modules/cluster_tfidf/tester.html#PackageTester"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.tester.PackageTester" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cluster_tfidf.tester.PackageTester.result">
+<span class="sig-name descname"><span class="pre">result</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/tester.html#PackageTester.result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.tester.PackageTester.result" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cluster_tfidf.utils">
+<span id="cluster-tfidf-utils-module"></span><h2>cluster_tfidf.utils module<a class="headerlink" href="#module-cluster_tfidf.utils" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cluster_tfidf.utils.clean_term">
+<span class="sig-prename descclassname"><span class="pre">cluster_tfidf.utils.</span></span><span class="sig-name descname"><span class="pre">clean_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/utils.html#clean_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.utils.clean_term" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cluster_tfidf.utils.cosine_sim_words">
+<span class="sig-prename descclassname"><span class="pre">cluster_tfidf.utils.</span></span><span class="sig-name descname"><span class="pre">cosine_sim_words</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeddings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/utils.html#cosine_sim_words"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.utils.cosine_sim_words" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cluster_tfidf.utils.count_file_rows">
+<span class="sig-prename descclassname"><span class="pre">cluster_tfidf.utils.</span></span><span class="sig-name descname"><span class="pre">count_file_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'latin1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/utils.html#count_file_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.utils.count_file_rows" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cluster_tfidf.utils.get_n_docs_from_training_path">
+<span class="sig-prename descclassname"><span class="pre">cluster_tfidf.utils.</span></span><span class="sig-name descname"><span class="pre">get_n_docs_from_training_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'latin1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/utils.html#get_n_docs_from_training_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.utils.get_n_docs_from_training_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cluster_tfidf.utils.myCosine">
+<span class="sig-prename descclassname"><span class="pre">cluster_tfidf.utils.</span></span><span class="sig-name descname"><span class="pre">myCosine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cluster_tfidf/utils.html#myCosine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cluster_tfidf.utils.myCosine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cluster_tfidf">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cluster_tfidf" title="Permalink to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Cluster Tfidf</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cluster_tfidf</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cluster_tfidf package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">cluster_tfidf</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">cluster_tfidf</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Reich, V.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/cluster_tfidf.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
