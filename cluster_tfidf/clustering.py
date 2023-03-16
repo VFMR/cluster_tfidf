@@ -145,7 +145,7 @@ class EmbeddingCluster(_BaseEmbeddingClass):
 
     def _update_clusters(self, split, cluster=True):
         split_indices = [x[1] for x in split]
-        X_embeds = np.array([x[2] for x in split])
+        X_embeds = np.array([x[2] for x in split]).reshape(len(split), -1)
         norm = np.linalg.norm
         self._norms = self._norms+[norm(x) for x in X_embeds]
 
