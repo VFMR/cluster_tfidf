@@ -14,16 +14,18 @@ from .utils import clean_term
 
 
 class EmbeddingCluster(_BaseEmbeddingClass):
-    def __init__(self,
-                 embeddings,
-                 vectorizer,
-                 clustermethod='agglomerative',
-                 distance_threshold=0.4,
-                 n_words=False,
-                 cluster_share=0.2,
-                 checkterm='test',
-                 n_jobs=-1,
-                 **kwargs):
+    def __init__(
+        self,
+        embeddings,
+        vectorizer,
+        clustermethod="agglomerative",
+        distance_threshold=0.4,
+        n_words=False,
+        cluster_share=0.2,
+        checkterm="test",
+        n_jobs=-1,
+        **kwargs,
+    ):
         """[summary]
 
         Args:
@@ -35,9 +37,9 @@ class EmbeddingCluster(_BaseEmbeddingClass):
         Raises:
             ValueError: if clustermethod not valid
         """
-        super().__init__(embeddings=embeddings,
-                         vectorizer=vectorizer,
-                         checkterm=checkterm)
+        super().__init__(
+            embeddings=embeddings, vectorizer=vectorizer, checkterm=checkterm
+        )
         # input values:
         self.clustermethod = clustermethod
         self.distance_threshold = distance_threshold
@@ -51,41 +53,41 @@ class EmbeddingCluster(_BaseEmbeddingClass):
             self.n_words = min(n_words, len(self.index2word))
         else:
             self.n_words = len(self.index2word)
-        self._n_clusters = int(cluster_share*self.n_words)
+        self._n_clusters = int(cluster_share * self.n_words)
 
         # restrict embeddings to relevant words to save memory
-        self.embeddings = {word: self._embedding_lookup(word) for word in self.index2word.values()}
+        self.embeddings = {
+            word: self._embedding_lookup(word) for word in self.index2word.values()
+        }
 
         self.n_jobs = n_jobs
 
     def _get_cluster_model(self, **kwargs):
-        allowed_clustermethods = ['agglomerative', 'kmeans']
+        allowed_clustermethods = ["agglomerative", "kmeans"]
         throw_error = False
 
         if isinstance(self.clustermethod, str):
             if self.clustermethod in allowed_clustermethods:
-                if self.clustermethod=='agglomerative':
-
+                if self.clustermethod == "agglomerative":
                     # define standard parameters and update those set by user:
                     model_args = {
-                        'n_clusters': None,
-                        'affinity': 'cosine',
-                        'distance_threshold': self.distance_threshold,
-                        'linkage': 'average'
+                        "n_clusters": None,
+                        "affinity": "cosine",
+                        "distance_threshold": self.distance_threshold,
+                        "linkage": "average",
                     }
                     model_args.update(kwargs)
 
                     model = AgglomerativeClustering(**model_args)
-                elif self.clustermethod=='kmeans':
-                    model_args = {
-                        'n_clusters': self._n_clusters,
-                        'n_jobs': self.n_jobs
-                    }
+                elif self.clustermethod == "kmeans":
+                    model_args = {"n_clusters": self._n_clusters, "n_jobs": self.n_jobs}
                     model_args.update(kwargs)
                     model = KMeans(**model_args)
             else:
-                raise ValueError(f"""Inappropriate argument value for 'clustermethod'.
-                             Must be one of {allowed_clustermethods}""")
+                raise ValueError(
+                    f"""Inappropriate argument value for 'clustermethod'.
+                             Must be one of {allowed_clustermethods}"""
+                )
 
         else:
             try:
@@ -96,58 +98,54 @@ class EmbeddingCluster(_BaseEmbeddingClass):
 
         return model
 
-
     def set_params(self, **kwargs):
-        own_params = {key: value for key, value in kwargs.items() if key in self.__dict__}
-        model_params = {key: value for key, value in kwargs.items() if key not in self.__dict__}
+        own_params = {
+            key: value for key, value in kwargs.items() if key in self.__dict__
+        }
+        model_params = {
+            key: value for key, value in kwargs.items() if key not in self.__dict__
+        }
         for key, value in own_params.items():
             self.__dict__.update({key: value})
 
         self.model.set_params(**model_params)
-
 
     def get_params(self):
         params = self.__dict__
         params.update(self.model.get_params())
 
         # exclude "private" parameters:
-        params = {key: value for key, value in params.items if not key.startswith('_')}
+        params = {key: value for key, value in params.items if not key.startswith("_")}
         return params
-
 
     def _find_top_words(self):
         vectorizer = self._find_vectorizer_instance()
         idf = vectorizer.idf_
         vocab = {clean_term(term): ix for term, ix in vectorizer.vocabulary_.items()}
-        idf_vocab = sorted([ (idf[value], key) for key, value in vocab.items() ])
+        idf_vocab = sorted([(idf[value], key) for key, value in vocab.items()])
         top_words = [(x[1], self.word2index[x[1]]) for x in idf_vocab]
 
         return top_words
 
-
     def _cosine_distance(self, a, b):
-        return a@b / (np.linalg.norm(a)*np.linalg.norm(b))
-
+        return a @ b / (np.linalg.norm(a) * np.linalg.norm(b))
 
     def _multi_cluster_func(self, array):
         counts = pd.Series(array).value_counts()
-        multi_clusters = counts[counts>1].index
+        multi_clusters = counts[counts > 1].index
         return multi_clusters
-
 
     def _get_multi_clusters(self):
         return self._multi_cluster_func(self.index2cluster.values())
 
-
     def _get_n_clusters(self):
         return len(self._get_multi_clusters())
-
 
     def _update_clusters(self, split, cluster=True):
         split_indices = [x[1] for x in split]
         X_embeds = np.array([x[2] for x in split]).reshape(len(split), -1)
         norm = np.linalg.norm
-        self._norms = self._norms+[norm(x) for x in X_embeds]
+        self._norms = self._norms + [norm(x) for x in X_embeds]
 
         if cluster:
             clusters = self.model.fit_predict(X_embeds) + self._maxcluster
@@ -158,14 +156,14 @@ class EmbeddingCluster(_BaseEmbeddingClass):
         self.index2cluster.update(index2cluster)
         self._maxcluster = max([x for x in self.index2cluster.values()])
 
-
     def _fix_missing_clusters(self):
-        missing_ix = [ix for ix in self.index2word.keys() if not ix in self.index2cluster.keys()]
+        missing_ix = [
+            ix for ix in self.index2word.keys() if not ix in self.index2cluster.keys()
+        ]
         maxcluster = max(self.index2cluster.values())
         for ix in missing_ix:
             maxcluster += 1
             self.index2cluster.update({ix: maxcluster})
-
 
     def fit(self, X=None):
         """[summary]
@@ -185,8 +183,8 @@ class EmbeddingCluster(_BaseEmbeddingClass):
             np.array
         """
         X = self._find_top_words()
-        X_top = X[:self.n_words]
-        X_bottom = X[self.n_words:]
+        X_top = X[: self.n_words]
+        X_bottom = X[self.n_words :]
 
         random.shuffle(X_top)
 
@@ -196,20 +194,23 @@ class EmbeddingCluster(_BaseEmbeddingClass):
         excluded = []
         indices = []
 
-
         embedded_array = [(x[0], x[1], self._embedding_lookup(x[0])) for x in X_top]
 
         # remove all terms that have zero-vector, i.e. oov
-        excluded = excluded+[x for x in embedded_array if not x[2].any()]
+        excluded = excluded + [x for x in embedded_array if not x[2].any()]
         embedded_array = [x for x in embedded_array if x[2].any()]
-        indices = indices+[x[1] for x in embedded_array]
+        indices = indices + [x[1] for x in embedded_array]
         self._update_clusters(embedded_array)
 
         # manually add "clusters" for left out terms:
-        X_bottom_w_embeddings = [(x[0], x[1], self._embedding_lookup(x[0])) for x in X_bottom]
+        X_bottom_w_embeddings = [
+            (x[0], x[1], self._embedding_lookup(x[0])) for x in X_bottom
+        ]
         for array in [excluded, X_bottom_w_embeddings]:
+            if len(array) == 0:
+                continue
             self._update_clusters(array, cluster=False)
-            indices = indices+[x[1] for x in array]
+            indices = indices + [x[1] for x in array]
 
         # scaling the norms and adding them to lookup dictionary
         norms_scaled = self._scale_norms(self._norms)
@@ -220,7 +221,6 @@ class EmbeddingCluster(_BaseEmbeddingClass):
         self._fix_missing_clusters()
 
         return self
-
 
     def _scale_norms(self, norms):
         """Scale norms to be in [0,1] range
@@ -236,16 +236,14 @@ class EmbeddingCluster(_BaseEmbeddingClass):
         norms_scaled = scaler.fit_transform(norms)
         return norms_scaled
 
-
     def _make_save_folder(self, folder):
         if not os.path.exists(folder):
             os.makedirs(folder)
         else:
-            print('Save folder already exists. Overwriting content.')
+            print("Save folder already exists. Overwriting content.")
 
-
-    def save(self, dir, name='clustertfidf'):
-        """ Save to disk to allow using this model later on.
+    def save(self, dir, name="clustertfidf"):
+        """Save to disk to allow using this model later on.
         Saves multiple files into a folder
 
         Args:
@@ -257,24 +255,26 @@ class EmbeddingCluster(_BaseEmbeddingClass):
         self._make_save_folder(folder)
 
         exports = {
-            'index2word': self.index2word,
-            'word2index': self.word2index,
-            'index2norm': {key: float(value) for key, value in self.index2norm.items()},
-            'index2cluster': {key: int(value) for key, value in self.index2cluster.items()}
-            }
+            "index2word": self.index2word,
+            "word2index": self.word2index,
+            "index2norm": {key: float(value) for key, value in self.index2norm.items()},
+            "index2cluster": {
+                key: int(value) for key, value in self.index2cluster.items()
+            },
+        }
 
         for key, value in exports.items():
-            filename = os.path.join(folder, key+'.json')
-            with open(filename, 'w') as f:
+            filename = os.path.join(folder, key + ".json")
+            with open(filename, "w") as f:
                 json.dump(value, f)
 
     def _load_obj(self, file: str, archive: ZipFile = None):
         if archive is None:
-            with open(file+'.json', 'r') as f:
+            with open(file + ".json", "r") as f:
                 content = f.read()
                 result = json.loads(content)
         else:
-            with archive.open(file+'.json', 'r') as f:
+            with archive.open(file + ".json", "r") as f:
                 content = f.read()
                 result = json.loads(content)
         return result
@@ -285,12 +285,13 @@ class EmbeddingCluster(_BaseEmbeddingClass):
         Args:
             path (str): Name of the directory that holds the results from save method.
         """
-        self.index2word = self._load_obj(path+'/index2word', archive=archive)
-        self.word2index = self._load_obj(path+'/word2index', archive=archive)
-        self.index2norm = self._load_obj(path+'/index2norm', archive=archive)
-        self.index2cluster = self._load_obj(path+'/index2cluster', archive=archive)
-
+        self.index2word = self._load_obj(path + "/index2word", archive=archive)
+        self.word2index = self._load_obj(path + "/word2index", archive=archive)
+        self.index2norm = self._load_obj(path + "/index2norm", archive=archive)
+        self.index2cluster = self._load_obj(path + "/index2cluster", archive=archive)
 
         # make sure values are numeric:
         self.index2norm = {key: float(value) for key, value in self.index2norm.items()}
-        self.index2cluster = {key: int(value) for key, value in self.index2cluster.items()}
+        self.index2cluster = {
+            key: int(value) for key, value in self.index2cluster.items()
+        }
