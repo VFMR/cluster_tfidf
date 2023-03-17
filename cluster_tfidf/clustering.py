@@ -195,10 +195,14 @@ class EmbeddingCluster(_BaseEmbeddingClass):
         indices = []
 
         embedded_array = [(x[0], x[1], self._embedding_lookup(x[0])) for x in X_top]
+        self._check_embeddings(embedded_array, "No terms are provided for embedding.")
 
         # remove all terms that have zero-vector, i.e. oov
         excluded = excluded + [x for x in embedded_array if not x[2].any()]
         embedded_array = [x for x in embedded_array if x[2].any()]
+        self._check_embeddings(
+            embedded_array, "No embedding vectors exist for the provided words."
+        )
         indices = indices + [x[1] for x in embedded_array]
         self._update_clusters(embedded_array)
 
@@ -221,6 +225,11 @@ class EmbeddingCluster(_BaseEmbeddingClass):
         self._fix_missing_clusters()
 
         return self
+
+    @staticmethod
+    def _check_embeddings(array, msg):
+        if len(array) == 0:
+            raise Error(msg)
 
     def _scale_norms(self, norms):
         """Scale norms to be in [0,1] range
